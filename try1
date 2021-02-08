@@ -1,0 +1,23 @@
+data = read.table(file = "data.txt", header=FALSE,
+                       col.names = c('index', 'brain', 'body'))
+regression = lm( body ~ brain, data = data)
+
+#plot the data
+plot(data$brain, data$body, xlab = "brain",
+     ylab = "body", main = "brain vs body")
+
+library(qualityTools)
+
+boxplot(data$body)
+dotPlot(regression$residuals, xlab = "residual")
+plot(regression, which = 1)
+qqnorm(regression$residuals)
+qqline(regression$residuals, col = 2)
+
+summary(regression)
+anova(regression)
+
+mean = mean(data$body)
+std = sd(data$body)
+ks.test((data$body-mean)/std ,rnorm(62))
+#not normal, reject null
