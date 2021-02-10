@@ -1,0 +1,54 @@
+STA108_Project1_Part4
+
+Mia
+
+2/7/2021
+
+
+Four assumptions of linear regression model
+1.linear relation between x and y
+2.error constant variance
+3.error uncorrelated
+4.error normally distributed
+
+```{r}
+rm(list = ls())
+data = read.table(file = "data.txt", header=FALSE,
+                       col.names = c('sales', 'advertising'))
+regression = lm( sales ~ advertising, data = data)
+
+#dot plot of residuals
+library(qualityTools)
+dotPlot(regression$residuals, xlab = "residuals")
+#There is no outlying X values that could influence the appropriateness of the fitted regression function.
+
+#scatter-plot of residuals against fitted values for constancy
+plot(regression, which = 1)
+#There is no significant trend in the plot. We conclude variances of errors are constant.
+
+# Breusch-Pagan test for constancy
+library(lmtest)
+bptest(regression)  ## bp test
+#Since p-value 0.4945 is greater than significance level 0.05, we fail to reject the null hypothesis and conclude variances of errors are constant.
+
+#QQ-plot for normality
+qqnorm(regression$residuals)
+qqline(regression$residuals, col = 2)
+#These points are fairly close to the line. We conclude errors are normally distributed.
+
+#Kolmogorov-Smirnov Test for nomality
+mean = mean(data$sales)
+std = sd(data$sales)
+ks.test((data$sales-mean)/std ,rnorm(62))
+#Since p-value 0.7651 is greater than significance level 0.05, we fail to reject the null hypothesis and conclude errors are normally distributed.
+
+summary(regression)
+#The t-value of the intercept is 12.29. Since the p-value for b0,  4.59e-14, is less than significance level 0.05, we reject the null hypothesis and conclude beta0 does not equal to 0.
+#The t-value of the independent variable is 4.74. Since the p-value for b1, 3.73e-05, is less than significance level 0.05, we reject the null hypothesis and conclude beta1 does not equal to 0.
+#Our estimated regression model is: Y_hat = 18.32843 + 0.20777 * X
+#The R-squared value is 0.3979, which indicates the linear association between the dependent variable and the independent variable is not strong, but still significant.
+
+#F-test ANOVA
+#anova(regression)
+
+```
